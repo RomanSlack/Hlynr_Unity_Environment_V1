@@ -16,6 +16,9 @@ public sealed class InterceptorSpawner : MonoBehaviour
 
     void Launch()
     {
+
+
+
         if (ThreatSpawner.CurrentThreat == null)
         {
             Debug.LogWarning("No active threat to intercept.");
@@ -29,5 +32,9 @@ public sealed class InterceptorSpawner : MonoBehaviour
         // Wire guidance target
         var g = go.GetComponent<GuidanceProNav>();
         if (g) g.target = ThreatSpawner.CurrentThreat;
+
+        var seeker = go.GetComponent<SeekerSensor>();
+        if (seeker) seeker.target = ThreatSpawner.CurrentThreat;   // NEW
+
     }
 }

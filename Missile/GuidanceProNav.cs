@@ -13,11 +13,11 @@ public sealed class GuidanceProNav : MonoBehaviour
     public float timeToAlign = 0.5f;
 
     PIDAttitudeController pid;
-
+    SeekerSensor sensor;
     void Awake()
     {
         pid = GetComponent<PIDAttitudeController>();
-
+        sensor = GetComponent<SeekerSensor>();          // NEW
         // If target not set, find first object tagged "Target"
         if (target == null)
         {
@@ -28,7 +28,7 @@ public sealed class GuidanceProNav : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!target) return;
+        if (!target || (sensor && !sensor.HasLock)) return;
 
         // Desired direction: LOS vector
         Vector3 losDir = (target.position - transform.position).normalized;
