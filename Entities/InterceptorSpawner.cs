@@ -15,26 +15,27 @@ public sealed class InterceptorSpawner : MonoBehaviour
     }
 
     void Launch()
+{
+    if (ThreatSpawner.CurrentThreat == null)
     {
-
-
-
-        if (ThreatSpawner.CurrentThreat == null)
-        {
-            Debug.LogWarning("No active threat to intercept.");
-            return;
-        }
-
-        var go = Instantiate(missilePrefab, transform.position, transform.rotation);
-        var rb = go.GetComponent<Rigidbody>();
-        rb.AddForce(go.transform.forward * launchImpulse, ForceMode.Impulse);
-
-        // Wire guidance target
-        var g = go.GetComponent<GuidanceProNav>();
-        if (g) g.target = ThreatSpawner.CurrentThreat;
-
-        var seeker = go.GetComponent<SeekerSensor>();
-        if (seeker) seeker.target = ThreatSpawner.CurrentThreat;   // NEW
-
+        Debug.LogWarning("No active threat to intercept.");
+        return;
     }
+
+    var go = Instantiate(missilePrefab, transform.position, transform.rotation);
+    var rb = go.GetComponent<Rigidbody>();
+    rb.AddForce(go.transform.forward * launchImpulse, ForceMode.Impulse);
+
+    // Set guidance target
+    var seeker = go.GetComponent<SeekerSensor>();
+    if (seeker) seeker.target = ThreatSpawner.CurrentThreat;
+
+    var guidance = go.GetComponent<GuidanceProNav>();
+    if (guidance) guidance.target = ThreatSpawner.CurrentThreat;
+
+    // 🔁 Pass missile and target to the HUD controller
+    var hud = FindObjectOfType<MissileHUDController>();
+    if (hud) hud.AttachMissile(go, ThreatSpawner.CurrentThreat);
+}
+
 }

@@ -12,12 +12,21 @@ public sealed class GuidanceProNav : MonoBehaviour
     [Tooltip("Time (s) the missile should take to align with LOS")]
     public float timeToAlign = 0.5f;
 
+    public Vector3 GetDesiredAccelBody() => lastAccelBody;
+    Vector3 lastAccelBody;  // field
+
+
+
     PIDAttitudeController pid;
     SeekerSensor sensor;
+    Rigidbody rb;
+
     void Awake()
     {
+
         pid = GetComponent<PIDAttitudeController>();
         sensor = GetComponent<SeekerSensor>();          // NEW
+        rb = GetComponent<Rigidbody>();
         // If target not set, find first object tagged "Target"
         if (target == null)
         {
@@ -47,6 +56,7 @@ public sealed class GuidanceProNav : MonoBehaviour
 
         // Convert to body frame and hand off to PID
         Vector3 desiredRateBody = transform.InverseTransformDirection(desiredRateWorld);
+        lastAccelBody = Vector3.Cross(desiredRateBody, Vector3.forward) * rb.linearVelocity.magnitude;
         pid.ApplyRateCommand(desiredRateBody);
     }
 }

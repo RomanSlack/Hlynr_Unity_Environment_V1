@@ -9,7 +9,7 @@ public sealed class ThrustModel : MonoBehaviour
     [SerializeField] ThrustCurve curve;
     [Tooltip("Align thrust with +Z (instead of +X)")]
     [SerializeField] bool useForwardAxis = true;
-
+    public float EvaluatedThrustN { get; private set; }  // add below fields
     Rigidbody rb;
     FuelSystem fuel;
     float burnTime;
@@ -27,6 +27,7 @@ public sealed class ThrustModel : MonoBehaviour
 
         float dt = Time.fixedDeltaTime;
         float thrustN = curve.Evaluate(burnTime);
+        EvaluatedThrustN = thrustN;
         float massUsed = fuel.Consume(dt);
 
         // Apply force through centre-of-mass
